@@ -1,13 +1,14 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+
 #include "Structs.h"
 
 extern volatile LONG g_run;
 
 static DWORD WINAPI ModuleThread(LPVOID) {
   ConsoleStart();
-  Dbg("# DiabloLodMapDll %s -- thread started (pid %u)",
-      MH_BUILD_TAG, GetCurrentProcessId());
+  Dbg("# DiabloLodMapDll %s  thread started (pid %u)", MH_BUILD_TAG,
+      GetCurrentProcessId());
   while (g_run) {
     __try {
       ModuleTick();

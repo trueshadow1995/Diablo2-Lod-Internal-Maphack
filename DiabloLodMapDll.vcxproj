@@ -84,6 +84,9 @@
     <ClCompile Include="src\module.cpp" Condition="'$(Platform)'=='Win32'" />
     <ClCompile Include="src\main.cpp" Condition="'$(Platform)'=='Win32'" />
     <ClCompile Include="src\AutoMap\automap.cpp" Condition="'$(Platform)'=='Win32'" />
+    <ClCompile Include="src\AutoMap\monsters.cpp" Condition="'$(Platform)'=='Win32'" />
+    <ClCompile Include="src\AutoMap\items.cpp" Condition="'$(Platform)'=='Win32'" />
+    <ClCompile Include="src\AutoMap\exits.cpp" Condition="'$(Platform)'=='Win32'" />
     <ClCompile Include="src\Reveal\reveal.cpp" Condition="'$(Platform)'=='Win32'" />
     <ClCompile Include="src\Overlay\overlay.cpp" Condition="'$(Platform)'=='Win32'" />
     <ClCompile Include="src\Calls\call.cpp" Condition="'$(Platform)'=='Win32'" />
@@ -93,6 +96,7 @@
   <ItemGroup>
     <ClInclude Include="src\Structs\Structs.h" />
     <ClInclude Include="src\WorldToScreen\w2s.h" />
+    <ClInclude Include="src\AutoMap\automap.h" />
     <ClInclude Include="src\Scanner\patterns.h" />
     <ClInclude Include="src\Data\AreaNames.h" />
   </ItemGroup>

@@ -34,11 +34,14 @@ struct ToggleEntry {
 };
 
 static ToggleEntry s_toggles[] = {
-    {"Item Filter", &g_settings.itemFilter},
-    {"Gold Markers", &g_settings.goldMarkers},
-    {"Shrine Markers", &g_settings.shrineMarkers},
-    {"Monster HP Bars", &g_settings.monsterHP},
-    {"Quest Markers", &g_settings.questMarkers},
+    {"Monsters", &g_settings.showMonsters},
+    {"Items", &g_settings.itemFilter},
+    {"Gold Piles", &g_settings.goldMarkers},
+    {"Chests", &g_settings.showChests},
+    {"Exits", &g_settings.showExits},
+    {"Shrines", &g_settings.shrineMarkers},
+    {"Monster HP", &g_settings.monsterHP},
+    {"Quest Items", &g_settings.questMarkers},
 };
 static const int s_toggleCount = sizeof(s_toggles) / sizeof(s_toggles[0]);
 

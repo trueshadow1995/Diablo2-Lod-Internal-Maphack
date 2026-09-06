@@ -45,6 +45,8 @@ namespace off
     // path
     constexpr uint32_t P_X          = 0x02; // u16 world x
     constexpr uint32_t P_Y          = 0x06; // u16 world y
+    constexpr uint32_t P_GAMEX      = 0x04; // i32 game x (items/objects)
+    constexpr uint32_t P_GAMEY      = 0x08; // i32 game y (items/objects)
     constexpr uint32_t P_ROOM1      = 0x1C;
 
     // monster_data flags byte (boss/champ/minion bitfield at byte 0x16)
@@ -168,6 +170,9 @@ struct Settings
     bool showPanel   = false;  // INSERT toggles the settings panel
     bool itemFilter  = true;   // hide junk, show only good drops
     bool goldMarkers = true;   // highlight gold piles
+    bool showChests  = true;   // show chest markers
+    bool showExits   = true;   // show exit/area labels
+    bool showMonsters = true;  // show monster overlays
     bool shrineMarkers = false; // show shrine locations (future)
     bool monsterHP   = false;  // monster health bars (future)
     bool questMarkers = false; // quest item markers (future)
@@ -222,9 +227,6 @@ uint32_t Rd(uint32_t addr);
 uint32_t SRead(uint32_t addr);          // SEH-netted read
 bool     IsReadable(uint32_t addr);
 bool     LooksCode(uint32_t addr);      // inside image, not padding
-
-// Game message (gold). Never fatal: netted, self-disables on repeated faults.
-void PrintGameMsg(const wchar_t* text);
 
 // Module tick (module.cpp) -- called from ModuleThread
 void ModuleTick();

@@ -6,13 +6,12 @@
 #include "Structs.h"
 #include "AreaNames.h"
 
-// shared globals (defined in module.cpp)
 extern Fn       g_fn;
 extern ExitInfo g_exits[];
 extern int      g_exitCount;
 extern uint32_t g_base;
 
-// preset cell injection + exit info (snoogans draw_presets, ported)
+// preset cell injection + exit info
 static void PresetRoom(uint32_t r2, int actNo, uint32_t layer)
 {
     // object / monster preset cells
@@ -91,7 +90,7 @@ static void PresetRoom(uint32_t r2, int actNo, uint32_t layer)
         }
     }
 
-    // warp tiles: remember them for the exit labels (drawn each frame)
+    // warp tiles remember them for the exit labels drawn each frame
     if (g_exitCount < (int)(sizeof(g_exits) / sizeof(g_exits[0])))
     {
         int rx = (int)SRead(r2 + off::R2_X);
@@ -125,7 +124,7 @@ static void PresetRoom(uint32_t r2, int actNo, uint32_t layer)
     }
 }
 
-// reveal one level (snoogans reveal_level + draw_presets)
+// reveal one level snoogans reveal_level + draw_presets
 static int  s_actSeen = -1;
 static bool s_lvlDone[256];
 
@@ -215,7 +214,7 @@ static void RevealLevel(uint32_t levelAddr, uint32_t player, int actNo)
         s_lvlDone[levelNo] = true;
 }
 
-// First (town) level of each act -- snoogans town_levels[] / BH actIds[].
+// First town level of each act
 static const int kTownLevel[6] = { 1, 40, 75, 103, 109, 137 };
 
 void RevealAct(uint32_t player, bool fullAct)

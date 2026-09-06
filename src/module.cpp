@@ -6,13 +6,14 @@
 #define _WIN32_WINNT 0x0A00
 #endif
 #include <windows.h>
+
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
-#include "Structs/Structs.h"
-#include "Data/AreaNames.h"
 
-// globals
+#include "Data/AreaNames.h"
+#include "Structs/Structs.h"
+
 uint32_t g_base = 0;
 bool g_armed = false;
 Fn g_fn;
@@ -25,7 +26,6 @@ int g_exitCount = 0;
 
 volatile LONG g_run = 1;
 
-// forward declarations
 static bool InstallAutomapHook();
 
 bool ModuleShouldRun() { return g_run != 0; }
@@ -78,7 +78,7 @@ void Dbg(const char* fmt, ...) {
   va_start(ap, fmt);
   vsnprintf_s(buf, sizeof(buf), _TRUNCATE, fmt, ap);
   va_end(ap);
-  printf("%s\n", buf);  // mirror into the debug console (no-op if off)
+  printf("%s\n", buf); 
   fflush(stdout);
   fwrite(buf, 1, strlen(buf), f);
   fwrite("\n", 1, 1, f);
@@ -90,11 +90,8 @@ static bool ArmFunctions() {
   if (!g_base) g_base = (uint32_t)(uintptr_t)GetModuleHandleA(nullptr);
   if (!g_base) return false;
 
-  // pattern scan to find all functions.
   if (!ScanAllPatterns(g_fn)) return false;
 
-  // Core reveal + cell injection must all be found.  add/remove room data
-  // is optional (it only widens the reveal to un-built rooms
   if (!(g_fn.addRoom && g_fn.removeRoom)) {
     g_fn.addRoom = 0;
     g_fn.removeRoom = 0;
@@ -104,14 +101,13 @@ static bool ArmFunctions() {
   Dbg("Arm: OK base=0x%08X (print=0x%08X draw=0x%08X/0x%08X getLayer=0x%08X)",
       g_base, g_fn.printGame, g_fn.drawLine, g_fn.drawText, g_fn.getLayer);
 
-  // Install the automap render-pass hook
   InstallAutomapHook();
   return true;
 }
 
-// Scan for data globals using code references found by the function scanner.
+
 static bool PickDataLayout() {
-  if (g_dataSet >= 0) return true;  // already resolved
+  if (g_dataSet >= 0) return true;  
 
   HMODULE mod = GetModuleHandleA(nullptr);
   if (!mod) return false;
@@ -171,38 +167,11 @@ int PlayerAct(uint32_t player) {
   return (actNo >= 0 && actNo <= 4) ? actNo : -1;
 }
 
-// in-game message
-void PrintGameMsg(const wchar_t* text) {
-  if (!g_armed || !g_fn.printGame || !LooksCode(g_fn.printGame)) {
-    Dbg("Print: no verified print offset, skipping");
-    return;
-  }
-  static int mode = 0;  // 0 = stdcall first, then fastcall after faults
-  static int faults = 0;
-  __try {
-    if (mode == 0)
-      CallFn2(g_fn.printGame, (uint32_t)(uintptr_t)text, 4);  // gold
-    else
-      CallFast2(g_fn.printGame, (uint32_t)(uintptr_t)text, 4);
-  } __except (EXCEPTION_EXECUTE_HANDLER) {
-    if (++faults >= 3 && mode == 0) {
-      mode = 1;  // try the fastcall convention for this session
-      faults = 0;
-      Dbg("Print: stdcall faulted x3 -- switching to fastcall");
-    }
-  }
-}
-
-// automap render-pass hook (sub_459E90 = automap text renderer)
-// patch the first 8 bytes of sub_459E90 with a jmp to a code cave.
-// The cave executes the overwritten instructions, calls AmDrawTick(),
-// then jumps back to sub_459E90+8.  This makes overlay drawing happen
-// inside the game's own render pass where D2GFX calls produce visible output.
 static uint32_t s_hookCave = 0;
 static uint32_t s_hookTarget = 0;
 static bool s_hookInstalled = false;
 
-// This is called from the code cave (see InstallAutomapHook).
+// This is called from the code cave
 // It must be __cdecl with no parameters
 void __cdecl AmOverlayHook() { AmDrawTick(); }
 
@@ -213,7 +182,7 @@ static bool InstallAutomapHook() {
   uint32_t target =
       g_base + 0x59E90;  // sub_459E90 text renderer in automap draw
 
-  // Verify the target looks like code
+
   uint8_t first2[2] = {};
   __try {
     memcpy(first2, (void*)(uintptr_t)target, 2);
@@ -393,7 +362,7 @@ void ModuleTick() {
   uint32_t player = Player();
   if (!player) {
     if (g_dataSet >= 0) {
-      // Left the game (menu/lobby): forget reveal state.
+      // Left the game (menu/lobby) forget reveal state.
       g_dataSet = -1;
       ResetDone();
       g_exitCount = 0;
@@ -409,7 +378,7 @@ void ModuleTick() {
   }
 
   if (g_dataSet < 0 && !PickDataLayout())
-    return;  // armed but layout undecided: retry next tick
+    return; 
 
   int actNo = PlayerAct(player);
   uint32_t cur = GetPlayerLevelAddr(player);
@@ -421,9 +390,9 @@ void ModuleTick() {
     s_lastAct = actNo;
     s_lastLevel = levelNo;
     if (actChanged) {
-      s_announced = false;  // new act: announce it as an act again
-      g_exitCount = 0;      // labels belong to the current act
-      ResetDone();          // full reset only on act change
+      s_announced = false;
+      g_exitCount = 0;     
+      ResetDone();          
     }
 
     // Only reveal the current level on level change (no full act walk).
@@ -436,19 +405,14 @@ void ModuleTick() {
 
     if (!s_announced) {
       s_announced = true;
-      wchar_t msg[128];
-      swprintf_s(msg, L"[DiabloLodMap] revealed act %d (%hs)", actNo + 1,
-                 AreaName((uint32_t)levelNo));
-      PrintGameMsg(msg);
+      Dbg("revealed act %d (%s)", actNo + 1,
+          AreaName((uint32_t)levelNo));
     } else {
-      wchar_t msg[128];
-      swprintf_s(msg, L"[DiabloLodMap] revealed %hs",
-                 AreaName((uint32_t)levelNo));
-      PrintGameMsg(msg);
+      Dbg("revealed %s",
+          AreaName((uint32_t)levelNo));
     }
 
-    // Install the automap render-pass hook on first area enter.
-    // This must happen AFTER we have a valid base address.
+    // Install the automap render-pass hook on first area enter
     if (!s_hookInstalled) InstallAutomapHook();
   }
 }
