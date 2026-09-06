@@ -1,6 +1,6 @@
 # DiabloLodMapDll
 
-Slim internal maphack for **Diablo II: Lord of Destruction 1.14d**
+Internal "MapHack" for **Diablo II: Lord of Destruction 1.14d**
 
 
 | Piece | What it does |
