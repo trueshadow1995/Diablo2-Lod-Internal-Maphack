@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Reveal">
+      <UniqueIdentifier>{A1C9E3D5-4B2F-4A6E-8D3C-5F7B9A1E2C44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mh">
+      <UniqueIdentifier>{B7D8C4E1-6F3A-4E92-9C5D-2A1B8F7E6D30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Offsets">
+      <UniqueIdentifier>{E2F6B8A4-9C80-4D31-8B7A-1A4C0D6F3E22}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Structs\Structs.h" />
+    <ClInclude Include="src\WorldToScreen\w2s.h" />
+    <ClInclude Include="src\Scanner\patterns.h" />
+    <ClInclude Include="src\Data\AreaNames.h" />
+  </ItemGroup>
+</Project>
