@@ -7,14 +7,12 @@ Slim internal maphack for **Diablo II: Lord of Destruction 1.14d**
 |---|---|
 | `DiabloLodMapDll.dll` | one thread that (a) reveals the whole current area through the game's own automap code on every area change, (b) injects chest / object / exit marker cells into the automap, (c) draws monsters (immunity-colored crosses, boss names) and exit/area labels on the open automap via the game's own draw functions |
 
- Everything is drawn by the game itself, so it works at
-any zoom and needs no pixel alignment.
-
+ Everything is drawn by the game itself, so it works at any zoom and needs no pixel alignment.
+ 
 Modeled on gonzoj's **snoogans** maphack (`unseenstorm/D2linuxhack`, GPLv3):
 same reveal flow (`init_automap_layer` -> per-room2
 `add_room_data`/`reveal_automap_room`/`remove_room_data`, preset cells via
-`new_automap_cell`/`add_automap_cell`, per-frame automap drawing), ported to a
-native Windows DLL and trimmed to the maphack core.
+`new_automap_cell`/`add_automap_cell`, per-frame automap drawing)
 
 
 ## Use
